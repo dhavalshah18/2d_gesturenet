@@ -12,8 +12,7 @@ class Solver(object):
     default_optim_args = {"lr": 0.01,
                           "weight_decay": 0.}
 
-    def __init__(self, optim=torch.optim.SGD, optim_args={},
-                 loss_func=nn.CrossEntropyLoss()):
+    def __init__(self, optim=torch.optim.SGD, optim_args={}, loss_func=nn.CrossEntropyLoss()):
 
         optim_args_merged = self.default_optim_args.copy()
         optim_args_merged.update(optim_args)
@@ -71,7 +70,6 @@ class Solver(object):
                 optim.step()
 
                 self.train_loss_history.append(loss.detach().cpu().numpy())
-                self.train_loss_history.append(loss.detach().cpu().numpy())
                 if log_nth and i % log_nth == 0:
                     last_log_nth_losses = self.train_loss_history[-log_nth:]
                     train_loss = np.mean(last_log_nth_losses)
@@ -80,8 +78,10 @@ class Solver(object):
                            iter_per_epoch * num_epochs,
                            train_loss))
                     self.writer.add_scalar("Dice loss", train_loss, i + epoch * iter_per_epoch)
-
+            
             _, preds = torch.max(outputs, 1)
+            print("Preds: ", preds)
+            print("Targets: ", targets)
             train_acc = np.mean((preds == targets).detach().cpu().numpy())
             self.train_acc_history.append(train_acc)
 
