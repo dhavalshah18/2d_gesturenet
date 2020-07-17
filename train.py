@@ -14,18 +14,19 @@ def train():
 
     train_data = GestureData(path, mode="train")
     val_data = GestureData(path, mode="val")
-    train_loader = data.DataLoader(train_data, batch_size=32, shuffle=True, num_workers=4)
-    val_loader = data.DataLoader(val_data, batch_size=32, shuffle=False, num_workers=4)
+    train_loader = data.DataLoader(train_data, batch_size=64, shuffle=True, num_workers=4)
+    val_loader = data.DataLoader(val_data, batch_size=64, shuffle=False, num_workers=4)
 
     model = nn.DataParallel(res2net50(num_classes=35))
     model = model.cuda()
 
     optim_args = {"lr": 1e-4, "weight_decay": 1e-3}
     solver = Solver(optim=torch.optim.Adam, optim_args=optim_args)
-    solver.train(model, train_loader, val_loader, num_epochs=5, log_nth=10)
+    solver.train(model, train_loader, val_loader, num_epochs=10, log_nth=50)
 
     name = "res2net50.pth"
     torch.save(model.state_dict(), name)
 
+    
 if __name__ == "__main__":
     train()
